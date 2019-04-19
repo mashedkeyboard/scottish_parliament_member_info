@@ -11,7 +11,7 @@ JSON.parse(response.to_s, symbolize_names: true).each do |person|
   parsed_name = person[:ParliamentaryName].split(', ').reverse.join(' ')
   parsed_name.sub!(/(?:Mr|Mrs|Ms|Dr|Lord) /, '')
   people[person[:PersonID]] = {
-      identifier__scotparl: person[:PersonID],
+      id: person[:PersonID],
       image: person[:PhotoURL],
       name: parsed_name
   }
@@ -22,4 +22,4 @@ JSON.parse(emails.to_s, symbolize_names: true).each do |email|
   people[email[:PersonID]][:email] = email[:Address] if people[email[:PersonID]]
 end
 
-ScraperWiki.save_sqlite([:identifier__scotparl], people.values)
+ScraperWiki.save_sqlite([:id], people.values)
