@@ -1,25 +1,14 @@
-# This is a template for a Ruby scraper on morph.io (https://morph.io)
-# including some code snippets below that you should find helpful
+# frozen_string_literal: true
 
-# require 'scraperwiki'
-# require 'mechanize'
-#
-# agent = Mechanize.new
-#
-# # Read in a page
-# page = agent.get("http://foo.com")
-#
-# # Find somehing on the page using css selectors
-# p page.at('div.content')
-#
-# # Write out to the sqlite database using scraperwiki library
-# ScraperWiki.save_sqlite(["name"], {"name" => "susan", "occupation" => "software developer"})
-#
-# # An arbitrary query against the database
-# ScraperWiki.select("* from data where 'name'='peter'")
+require 'http'
+require 'scraperwiki'
 
-# You don't have to do things with the Mechanize or ScraperWiki libraries.
-# You can use whatever gems you want: https://morph.io/documentation/ruby
-# All that matters is that your final data is written to an SQLite database
-# called "data.sqlite" in the current working directory which has at least a table
-# called "data".
+response = HTTP.get('https://data.parliament.scot/api/members')
+
+JSON.parse(response.to_s, symbolize_names: true).each do |person|
+  parsed_name = person[:ParliamentaryName].split(', ').reverse.join(' ')
+  ScraperWiki.save_sqlite([:identifier__scotparl],
+                          identifier__scotparl: person[:PersonID],
+                          image: person[:PhotoURL],
+                          name: parsed_name)
+end
