@@ -12,6 +12,7 @@ JSON.parse(response.to_s, symbolize_names: true).each do |person|
   parsed_name.sub!(/(?:Mr|Mrs|Ms|Dr|Lord) /, '')
   people[person[:PersonID]] = {
       id: person[:PersonID],
+      identifier__scotparl: person[:PersonID],
       image: person[:PhotoURL],
       name: parsed_name
   }
