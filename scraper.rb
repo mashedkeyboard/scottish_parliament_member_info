@@ -20,7 +20,9 @@ end
 
 emails = HTTP.get('https://data.parliament.scot/api/emailaddresses')
 JSON.parse(emails.to_s, symbolize_names: true).each do |email|
-  people[email[:PersonID]][:email] = email[:Address] if people[email[:PersonID]]
+  if people[email[:PersonID]] && email[:Address] != ''
+    people[email[:PersonID]][:email] = email[:Address]
+  end
 end
 
 ScraperWiki.save_sqlite([:id], people.values)
